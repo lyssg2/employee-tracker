@@ -1,22 +1,88 @@
-const express = require('express');
-// Import and require mysql2
-const mysql = require('mysql2');
+// Required Dependencies
+const { prompt } = require("inquirer");
+const db = require("./db");
+require("console.table");
 
-const PORT = process.env.PORT || 3001;
-const app = express();
+// Initiates prompts
+loadAllPrompts()
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+// Main prompts
+function loadAllPrompts() {
+    prompt([{
+        type: 'list',
+        name: 'choice',
+        message: 'Please make a selection below',
+        choices: [
+            'View all Employees',
+            'View all Employees by Department',
+            'View all Employees by Manager',
+            'Add Employee',
+            'Remove Employee',
+            'Update Employee Role',
+            'Update Employee Manager',
+            'View all Departments',
+            'Remove Department',
+            'View All Roles',
+            'Add Role',
+            'Remove Role',
+            'View Total Utilized Budget By Department',
+            'Quit',
+        ]
+    }]).then(res => {
+        let choice = res.choice
 
-// Connect to database
-const db = mysql.createConnection({
-        host: 'localhost',
-        // MySQL username,
-        user: 'root',
-        // MySQL password
-        password: 'W1nch3$t3r22',
-        database: 'employees'
-    },
-    console.log(`Connected to the employees database.`)
-);
+        switch (choice) {
+            case 'View all Employees':
+                viewEmployees()
+                break;
+            case 'View all Employees by Department':
+                viewEmployeesByDep()
+                break;
+            case 'View all Employees by Manager':
+                viewEmployeesByManager()
+                break;
+            case 'Add Employee':
+                addEmployee()
+                break;
+            case 'Remove Employee':
+                removeEmployee()
+                break;
+            case 'Update Employee Role':
+                updateEmployeeRole()
+                break;
+            case 'Update Employee Manager':
+                updateEmployeeManager()
+                break;
+            case 'View all Departments':
+                viewAllDeps()
+                break;
+            case 'Remove Department':
+                removeDep()
+                break;
+            case 'View All Roles':
+                viewAllRoles()
+                break;
+            case 'Add Role':
+                addRole()
+                break;
+            case 'Remove Role':
+                removeRole()
+                break;
+            case 'View Total Utilized Budget By Department':
+                viewBudgetByDep()
+            default:
+                quit()
+        }
+    })
+}
+
+// View all employee function
+viewEmployees = () => {
+    db.findAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            console.log('\n')
+            console.table(employees)
+        })
+        .then(() => loadAllPrompts())
+}
