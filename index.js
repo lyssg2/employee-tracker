@@ -1,6 +1,7 @@
 // Required Dependencies
 const { prompt } = require("inquirer");
 const db = require("./db");
+const connection = require('./db/connection')
 require("console.table");
 
 // Initiates prompts
@@ -15,7 +16,6 @@ function loadAllPrompts() {
         choices: [
             'View all Employees',
             'View all Employees by Department',
-            'View all Employees by Manager',
             'Add Employee',
             'Remove Employee',
             'Update Employee Role',
@@ -37,9 +37,6 @@ function loadAllPrompts() {
                 break;
             case 'View all Employees by Department':
                 viewEmployeesByDep()
-                break;
-            case 'View all Employees by Manager':
-                viewEmployeesByManager()
                 break;
             case 'Add Employee':
                 addEmployee()
@@ -85,4 +82,99 @@ viewEmployees = () => {
             console.table(employees)
         })
         .then(() => loadAllPrompts())
+}
+
+// View all employees by department
+viewEmployeesByDep = () => {
+    db.findAllDeps()
+        .then(([rows]) => {
+            let departments = rows;
+            const depChoices = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }))
+
+            prompt([{
+                    type: "list",
+                    name: "depId",
+                    message: "Please select department to view employees",
+                    choices: depChoices
+                }])
+                .then(res => db.findDepEmployees(res.departmentId))
+                .then(([rows]) => {
+                    let employees = rows;
+                    console.log("\n");
+                    console.table(employees);
+                })
+                .then(() => loadAllPrompts())
+        })
+}
+
+// Add Employee
+addEmployee = () => {
+    prompt([{
+                name: "first_name",
+                message: "What is the employee's first name?"
+            },
+            {
+                name: "last_name",
+                message: "What is the employee's last name?"
+            },
+        ])
+        .then(res => {
+            let firstName = res.first_name
+            let lastName = res.last_name
+
+            db.findAllRoles()
+                .then(([rows]) => {
+                    let roles = rows;
+                    const roleChoices = roles.map(({ id, title }) => ({
+                        name: title,
+                        value: id
+                    }));
+
+                    prompt({
+                            type: "list",
+                            name: "roleId",
+                            message: "What is the employee's role?",
+                            choices: roleChoices
+                        })
+                        .then(res => {
+                            let roleId = res.roleId;
+                            db.
+
+                            findAllEmployees()
+                                .then(([rows]) => {
+                                    let employee = rows
+                                    const managerOptions = employee.map(({ id, first_name, last_name }) => ({
+                                        name: `${first_name} ${last_name}`,
+                                        value: id
+                                    }));
+
+                                    managerOptions.unshift({ name: "None", value: null });
+
+                                    prompt({
+                                            type: "list",
+                                            name: "managerId",
+                                            message: "Who is the employee's manager?",
+                                            choices: managerOptions
+                                        })
+                                        .then(res => {
+                                            let employee = {
+                                                manager_id: res.managerId,
+                                                role_id: roleId,
+                                                first_name: firstName,
+                                                last_name: lastName
+                                            }
+
+                                            db.createEmployee(employee);
+                                        })
+                                        .then(() => console.log(
+                                            `Added ${firstName} ${lastName} to the database`
+                                        ))
+                                        .then(() => loadAllPrompts())
+                                })
+                        })
+                })
+        })
 }
