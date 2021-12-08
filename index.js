@@ -18,14 +18,11 @@ function loadAllPrompts() {
             'View all Employees by Department',
             'Add Employee',
             'Remove Employee',
-            'Update Employee Role',
-            'Update Employee Manager',
             'View all Departments',
             'Remove Department',
             'View All Roles',
             'Add Role',
             'Remove Role',
-            'View Total Utilized Budget By Department',
             'Quit',
         ]
     }]).then(res => {
@@ -44,12 +41,6 @@ function loadAllPrompts() {
             case 'Remove Employee':
                 removeEmployee()
                 break;
-            case 'Update Employee Role':
-                updateEmployeeRole()
-                break;
-            case 'Update Employee Manager':
-                updateEmployeeManager()
-                break;
             case 'View all Departments':
                 viewAllDeps()
                 break;
@@ -65,8 +56,6 @@ function loadAllPrompts() {
             case 'Remove Role':
                 removeRole()
                 break;
-            case 'View Total Utilized Budget By Department':
-                viewBudgetByDep()
             default:
                 quit()
         }
@@ -176,5 +165,26 @@ addEmployee = () => {
                                 })
                         })
                 })
+        })
+}
+
+removeEmployee = () => {
+    db.findAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const employeeOptions = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }))
+
+            prompt([{
+                    type: "list",
+                    name: "employeeId",
+                    message: "Which employee do you want to remove?",
+                    choices: employeeOptions
+                }])
+                .then(res => db.removeEmployee(res.employeeId))
+                .then(() => console.log("Removed employee from the database"))
+                .then(() => loadAllPrompts())
         })
 }
