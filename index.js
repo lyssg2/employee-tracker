@@ -1,7 +1,6 @@
 // Required Dependencies
 const { prompt } = require("inquirer");
 const db = require("./db");
-const connection = require('./db/connection')
 require("console.table");
 
 // Initiates prompts
@@ -25,6 +24,7 @@ function loadAllPrompts() {
             'View All Roles',
             'Add Role',
             'Remove Role',
+            'View Utilized Budget by Department',
             'Quit',
         ]
     }]).then(res => {
@@ -63,6 +63,9 @@ function loadAllPrompts() {
                 break;
             case 'Remove Role':
                 removeRole()
+                break;
+            case 'View Utilized Budget by Department':
+                viewBudgetbyDep()
                 break;
             default:
                 quit()
@@ -348,6 +351,17 @@ removeRole = () => {
                 .then(() => console.log("Success! Removed role from the database"))
                 .then(() => loadAllPrompts())
         })
+}
+
+// Views the utilized budget by department
+viewBudgetbyDep = () => {
+    db.viewDepBudgets()
+        .then(([rows]) => {
+            let departments = rows;
+            console.log("\n");
+            console.table(departments);
+        })
+        .then(() => loadAllPrompts());
 }
 
 // Breaks from prompts
