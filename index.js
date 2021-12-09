@@ -18,6 +18,7 @@ function loadAllPrompts() {
             'View all Employees by Department',
             'Add Employee',
             'Remove Employee',
+            'Update Employee Role',
             'View all Departments',
             'Add Department',
             'Remove Department',
@@ -41,6 +42,9 @@ function loadAllPrompts() {
                 break;
             case 'Remove Employee':
                 removeEmployee()
+                break;
+            case 'Update Employee Role':
+                updateEmployeeRole()
                 break;
             case 'View all Departments':
                 viewAllDeps()
@@ -194,6 +198,45 @@ removeEmployee = () => {
         })
 }
 
+// Update employee role in db
+updateEmployeeRole = () => {
+    db.findAllEmployees()
+        .then(([rows]) => {
+            let employee = rows
+            const employeeOptions = employee.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+
+            prompt([{
+                    type: "list",
+                    name: "employeeId",
+                    message: "Which employee would you like to update their role for?",
+                    choices: employeeOptions
+                }])
+                .then(res => {
+                    let employeeId = res.employeeId
+                    db.findAllRoles()
+                        .then(([rows]) => {
+                            let roles = rows;
+                            const roleOptions = roles.map(({ id, title }) => ({
+                                name: title,
+                                value: id
+                            }));
+                            prompt([{
+                                    type: "list",
+                                    name: "roleId",
+                                    message: "Which role would you like to assign to this employee?",
+                                    choices: roleOptions
+                                }])
+                                .then(res => db.updateEmployeeRole(employeeId, res.roleId))
+                                .then(() => console.log("Success! Updated employee's role"))
+                                .then(() => loadAllPrompts())
+                        });
+                });
+        })
+}
+
 // View all departments in the db
 viewAllDeps = () => {
     db.findAllDeps()
@@ -305,4 +348,10 @@ removeRole = () => {
                 .then(() => console.log("Success! Removed role from the database"))
                 .then(() => loadAllPrompts())
         })
+}
+
+// Breaks from prompts
+quit = () => {
+    console.log("Thank you for using the employee tracker app! Bye for now!")
+    process.exit()
 }

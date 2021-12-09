@@ -34,12 +34,20 @@ class DB {
 
     // Remove an employee with provided id
     removeEmployee(employeeId) {
-            return this.connection.promise().query(
-                "DELETE FROM employee WHERE id = ?",
-                employeeId
-            );
-        }
-        // Find all departments in db
+        return this.connection.promise().query(
+            "DELETE FROM employee WHERE id = ?",
+            employeeId
+        );
+    }
+
+    // Update employee's role in db
+    updateEmployeeRole(employeeId, roleId) {
+        return this.connection.promise().query(
+            "UPDATE employee SET role_id = ? WHERE id = ?", [roleId, employeeId]
+        )
+    }
+
+    // Find all departments in db
     findAllDeps() {
         return this.connection.promise().query(
             "SELECT department.id, department.name FROM department;"
