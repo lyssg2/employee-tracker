@@ -58,6 +58,13 @@ class DB {
         return this.connection.promise().query("INSERT INTO department SET ?", department);
     }
 
+    // Remove department from db
+    removeDep(department) {
+        return this.connection.promise().query("DELETE FROM department WHERE id = ?",
+            department
+        )
+    }
+
 }
 
 

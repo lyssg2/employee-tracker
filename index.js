@@ -204,7 +204,7 @@ viewAllDeps = () => {
 }
 
 // Add a department
-function addDep() {
+addDep = () => {
     prompt([{
             name: "name",
             message: "What is the name of the department you would like to add?"
@@ -213,6 +213,28 @@ function addDep() {
             let name = res;
             db.createDep(name)
                 .then(() => console.log(`Success! Added ${name.name} department to the database`))
+                .then(() => loadAllPrompts())
+        })
+}
+
+// Remove a department
+removeDep = () => {
+    db.findAllDeps()
+        .then(([rows]) => {
+            let departments = rows;
+            const depOptions = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }))
+
+            prompt([{
+                    type: "list",
+                    name: "depId",
+                    message: "Which department would you like to remove?",
+                    choices: depOptions
+                }])
+                .then(res => db.removeDep(res.depId))
+                .then(() => console.log("Success! Removed department from the database"))
                 .then(() => loadAllPrompts())
         })
 }
