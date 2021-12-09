@@ -19,6 +19,7 @@ function loadAllPrompts() {
             'Add Employee',
             'Remove Employee',
             'View all Departments',
+            'Add Department',
             'Remove Department',
             'View All Roles',
             'Add Role',
@@ -43,6 +44,9 @@ function loadAllPrompts() {
                 break;
             case 'View all Departments':
                 viewAllDeps()
+                break;
+            case 'Add Department':
+                addDep()
                 break;
             case 'Remove Department':
                 removeDep()
@@ -185,6 +189,30 @@ removeEmployee = () => {
                 }])
                 .then(res => db.removeEmployee(res.employeeId))
                 .then(() => console.log("Removed employee from the database"))
+                .then(() => loadAllPrompts())
+        })
+}
+
+viewAllDeps = () => {
+    db.findAllDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            console.log("\n");
+            console.table(departments);
+        })
+        .then(() => loadAllPrompts());
+}
+
+// Add a department
+function addDep() {
+    prompt([{
+            name: "name",
+            message: "What is the name of the department you would like to add?"
+        }])
+        .then(res => {
+            let name = res;
+            db.createDep(name)
+                .then(() => console.log(`Success! Added ${name.name} department to the database`))
                 .then(() => loadAllPrompts())
         })
 }

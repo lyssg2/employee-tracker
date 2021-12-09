@@ -41,12 +41,22 @@ class DB {
 
     // Remove an employee with provided id
     removeEmployee(employeeId) {
+            return this.connection.promise().query(
+                "DELETE FROM employee WHERE id = ?",
+                employeeId
+            );
+        }
+        // Find all departments in db
+    findAllDepartments() {
         return this.connection.promise().query(
-            "DELETE FROM employee WHERE id = ?",
-            employeeId
+            "SELECT department.id, department.name FROM department;"
         );
     }
 
+    // Create a new department in db
+    createDep(department) {
+        return this.connection.promise().query("INSERT INTO department SET ?", department);
+    }
 
 }
 
