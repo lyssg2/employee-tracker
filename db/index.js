@@ -69,6 +69,13 @@ class DB {
     createRole(role) {
         return this.connection.promise().query("INSERT INTO role SET ?", role);
     }
+
+    // Remove role from db
+    removeRole(role) {
+        return this.connection.promise().query("DELETE FROM role WHERE id = ?",
+            role
+        )
+    }
 }
 
 

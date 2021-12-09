@@ -7,7 +7,7 @@ require("console.table");
 // Initiates prompts
 loadAllPrompts()
 
-// Main prompts
+// All main prompts 
 function loadAllPrompts() {
     prompt([{
         type: 'list',
@@ -66,7 +66,7 @@ function loadAllPrompts() {
     })
 }
 
-// View all employee function
+// View all employees in db
 viewEmployees = () => {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -77,7 +77,7 @@ viewEmployees = () => {
         .then(() => loadAllPrompts())
 }
 
-// View all employees by department
+// View all employees by department in db
 viewEmployeesByDep = () => {
     db.findAllDeps()
         .then(([rows]) => {
@@ -103,7 +103,7 @@ viewEmployeesByDep = () => {
         })
 }
 
-// Add Employee
+// Add Employee to db
 addEmployee = () => {
     prompt([{
                 name: "first_name",
@@ -172,6 +172,7 @@ addEmployee = () => {
         })
 }
 
+// Remove an employee from the db
 removeEmployee = () => {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -193,6 +194,7 @@ removeEmployee = () => {
         })
 }
 
+// View all departments in the db
 viewAllDeps = () => {
     db.findAllDeps()
         .then(([rows]) => {
@@ -203,7 +205,7 @@ viewAllDeps = () => {
         .then(() => loadAllPrompts());
 }
 
-// Add a department
+// Add a department to the db
 addDep = () => {
     prompt([{
             name: "name",
@@ -217,7 +219,7 @@ addDep = () => {
         })
 }
 
-// Remove a department
+// Remove a department in the db
 removeDep = () => {
     db.findAllDeps()
         .then(([rows]) => {
@@ -239,7 +241,7 @@ removeDep = () => {
         })
 }
 
-// View all roles
+// View all roles in db
 viewAllRoles = () => {
     db.findAllRoles()
         .then(([rows]) => {
@@ -250,7 +252,7 @@ viewAllRoles = () => {
         .then(() => loadAllPrompts());
 }
 
-// Add a role
+// Add a role to the db
 addRole = () => {
     db.findAllDeps()
         .then(([rows]) => {
@@ -280,5 +282,27 @@ addRole = () => {
                         .then(() => console.log(`Success! Added ${role.title} to the database`))
                         .then(() => loadAllPrompts())
                 })
+        })
+}
+
+// Remove a role from the db
+removeRole = () => {
+    db.findAllRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            const roleOptions = roles.map(({ id, title }) => ({
+                name: title,
+                value: id
+            }))
+
+            prompt([{
+                    type: "list",
+                    name: "roleId",
+                    message: "Which role would you like to remove?",
+                    choices: roleOptions
+                }])
+                .then(res => db.removeRole(res.roleId))
+                .then(() => console.log("Success! Removed role from the database"))
+                .then(() => loadAllPrompts())
         })
 }
