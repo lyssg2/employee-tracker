@@ -188,13 +188,13 @@ removeEmployee = () => {
                     choices: employeeOptions
                 }])
                 .then(res => db.removeEmployee(res.employeeId))
-                .then(() => console.log("Removed employee from the database"))
+                .then(() => console.log("Success! Removed the employee from the database"))
                 .then(() => loadAllPrompts())
         })
 }
 
 viewAllDeps = () => {
-    db.findAllDepartments()
+    db.findAllDeps()
         .then(([rows]) => {
             let departments = rows;
             console.log("\n");
@@ -236,5 +236,49 @@ removeDep = () => {
                 .then(res => db.removeDep(res.depId))
                 .then(() => console.log("Success! Removed department from the database"))
                 .then(() => loadAllPrompts())
+        })
+}
+
+// View all roles
+viewAllRoles = () => {
+    db.findAllRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            console.log("\n");
+            console.table(roles);
+        })
+        .then(() => loadAllPrompts());
+}
+
+// Add a role
+addRole = () => {
+    db.findAllDeps()
+        .then(([rows]) => {
+            let departments = rows
+            const depOptions = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }))
+
+            prompt([{
+                        name: "title",
+                        message: "What would you like to name this role?"
+                    },
+                    {
+                        name: "salary",
+                        message: "What is the salary of the role?"
+                    },
+                    {
+                        type: "list",
+                        name: "department_id",
+                        message: "Which department would you like to add this role to?",
+                        choices: depOptions
+                    }
+                ])
+                .then(role => {
+                    db.createRole(role)
+                        .then(() => console.log(`Success! Added ${role.title} to the database`))
+                        .then(() => loadAllPrompts())
+                })
         })
 }

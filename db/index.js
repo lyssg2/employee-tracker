@@ -27,13 +27,6 @@ class DB {
         );
     }
 
-    // Finds all roles in db
-    findAllRoles() {
-        return this.connection.promise().query(
-            "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
-        );
-    }
-
     // Create a new employee
     createEmployee(employee) {
         return this.connection.promise().query("INSERT INTO employee SET ?", employee);
@@ -47,7 +40,7 @@ class DB {
             );
         }
         // Find all departments in db
-    findAllDepartments() {
+    findAllDeps() {
         return this.connection.promise().query(
             "SELECT department.id, department.name FROM department;"
         );
@@ -65,6 +58,17 @@ class DB {
         )
     }
 
+    // Finds all roles in db
+    findAllRoles() {
+        return this.connection.promise().query(
+            "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
+        );
+    }
+
+    // Create a new role in db
+    createRole(role) {
+        return this.connection.promise().query("INSERT INTO role SET ?", role);
+    }
 }
 
 
