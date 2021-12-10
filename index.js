@@ -71,6 +71,7 @@ function askQs() {
 
 // View all employees in db
 viewEmployees = () => {
+    console.log('\nVIEWING ALL EMPLOYEES IN DATABASE')
     db.findAllEmployees()
         .then(([rows]) => {
             let employees = rows;
@@ -82,6 +83,7 @@ viewEmployees = () => {
 
 // Add Employee to db
 addEmployee = () => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD EMPLOYEE TO DATABASE')
     prompt([{
                 name: "first_name",
                 message: "What is the employee's first name?"
@@ -151,6 +153,7 @@ addEmployee = () => {
 
 // Remove an employee from the db
 removeEmployee = () => {
+    console.log('\nANSWER PROMPTS BELOW TO REMOVE EMPLOYEE FROM DATABASE')
     db.findAllEmployees()
         .then(([rows]) => {
             let employees = rows;
@@ -173,6 +176,7 @@ removeEmployee = () => {
 
 // Update employee role in db
 updateEmployeeRole = () => {
+    console.log('\nANSWER PROMPTS BELOW TO UPDATE EMPLOYEE ROLE IN DATABASE')
     db.findAllEmployees()
         .then(([rows]) => {
             let employee = rows
@@ -212,6 +216,7 @@ updateEmployeeRole = () => {
 
 // View all departments in the db
 viewAllDeps = () => {
+    console.log('\nVIEWING ALL DEPARTMENTS IN DATABASE')
     db.findAllDeps()
         .then(([rows]) => {
             let departments = rows;
@@ -223,6 +228,7 @@ viewAllDeps = () => {
 
 // Add a department to the db
 addDep = () => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW DEPARTMENT TO THE DATABASE')
     prompt([{
             name: "name",
             message: "What is the name of the department you would like to add?"
@@ -237,6 +243,7 @@ addDep = () => {
 
 // Remove a department in the db
 removeDep = () => {
+    console.log('\nANSWER PROMPTS BELOW TO REMOVE A DEPARTMENT FROM THE DATABASE *WARNING!! REMOVING A DEPARTMENT WILL ALSO REMOVE ASSSOCIATED EMPLOYEES AND ROLES!!')
     db.findAllDeps()
         .then(([rows]) => {
             let departments = rows;
@@ -259,6 +266,7 @@ removeDep = () => {
 
 // View all roles in db
 viewAllRoles = () => {
+    console.log('\nVIEWING ALL ROLES IN DATABASE')
     db.findAllRoles()
         .then(([rows]) => {
             let roles = rows;
@@ -270,6 +278,7 @@ viewAllRoles = () => {
 
 // Add a role to the db
 addRole = () => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW ROLE TO THE DATABASE')
     db.findAllDeps()
         .then(([rows]) => {
             let departments = rows
@@ -303,6 +312,7 @@ addRole = () => {
 
 // Remove a role from the db
 removeRole = () => {
+    console.log('\nANSWER PROMPTS BELOW TO REMOVE A ROLE FROM THE DATABASE *WARNING!! REMOVING A ROLE WILL ALSO REMOVE ASSSOCIATED EMPLOYEES!!')
     db.findAllRoles()
         .then(([rows]) => {
             let roles = rows;
@@ -325,6 +335,7 @@ removeRole = () => {
 
 // Views the utilized budget by department
 viewBudgetbyDep = () => {
+    console.log('\nVIEWING UTILIZED BUDGETS BY DEPARTMENT')
     db.viewDepBudgets()
         .then(([rows]) => {
             let departments = rows;
