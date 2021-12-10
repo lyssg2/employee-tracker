@@ -19,14 +19,6 @@ class DB {
         );
     }
 
-    // Find all employees in a given department in db and their role
-    findDepEmployees(departmentId) {
-        return this.connection.promise().query(
-            "SELECT employee.first_name, employee.last_name, department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id",
-            departmentId
-        );
-    }
-
     // Create a new employee
     createEmployee(employee) {
         return this.connection.promise().query("INSERT INTO employee SET ?", employee);

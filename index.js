@@ -4,17 +4,16 @@ const db = require("./db");
 require("console.table");
 
 // Initiates prompts
-loadAllPrompts()
+askQs()
 
 // All main prompts 
-function loadAllPrompts() {
+function askQs() {
     prompt([{
         type: 'list',
         name: 'choice',
         message: 'Please make a selection below',
         choices: [
             'View all Employees',
-            'View all Employees by Department',
             'Add Employee',
             'Remove Employee',
             'Update Employee Role',
@@ -33,9 +32,6 @@ function loadAllPrompts() {
         switch (choice) {
             case 'View all Employees':
                 viewEmployees()
-                break;
-            case 'View all Employees by Department':
-                viewEmployeesByDep()
                 break;
             case 'Add Employee':
                 addEmployee()
@@ -81,33 +77,7 @@ viewEmployees = () => {
             console.log('\n')
             console.table(employees)
         })
-        .then(() => loadAllPrompts())
-}
-
-// View all employees by department in db
-viewEmployeesByDep = () => {
-    db.findAllDeps()
-        .then(([rows]) => {
-            let departments = rows;
-            const depChoices = departments.map(({ id, name }) => ({
-                name: name,
-                value: id
-            }))
-
-            prompt([{
-                    type: "list",
-                    name: "depId",
-                    message: "Please select department to view employees",
-                    choices: depChoices
-                }])
-                .then(res => db.findDepEmployees(res.departmentId))
-                .then(([rows]) => {
-                    let employees = rows;
-                    console.log("\n");
-                    console.table(employees);
-                })
-                .then(() => loadAllPrompts())
-        })
+        .then(() => askQs())
 }
 
 // Add Employee to db
@@ -172,7 +142,7 @@ addEmployee = () => {
                                         .then(() => console.log(
                                             `Added ${firstName} ${lastName} to the database`
                                         ))
-                                        .then(() => loadAllPrompts())
+                                        .then(() => askQs())
                                 })
                         })
                 })
@@ -197,7 +167,7 @@ removeEmployee = () => {
                 }])
                 .then(res => db.removeEmployee(res.employeeId))
                 .then(() => console.log("Success! Removed the employee from the database"))
-                .then(() => loadAllPrompts())
+                .then(() => askQs())
         })
 }
 
@@ -234,7 +204,7 @@ updateEmployeeRole = () => {
                                 }])
                                 .then(res => db.updateEmployeeRole(employeeId, res.roleId))
                                 .then(() => console.log("Success! Updated employee's role"))
-                                .then(() => loadAllPrompts())
+                                .then(() => askQs())
                         });
                 });
         })
@@ -248,7 +218,7 @@ viewAllDeps = () => {
             console.log("\n");
             console.table(departments);
         })
-        .then(() => loadAllPrompts());
+        .then(() => askQs());
 }
 
 // Add a department to the db
@@ -261,7 +231,7 @@ addDep = () => {
             let name = res;
             db.createDep(name)
                 .then(() => console.log(`Success! Added ${name.name} department to the database`))
-                .then(() => loadAllPrompts())
+                .then(() => askQs())
         })
 }
 
@@ -283,7 +253,7 @@ removeDep = () => {
                 }])
                 .then(res => db.removeDep(res.depId))
                 .then(() => console.log("Success! Removed department from the database"))
-                .then(() => loadAllPrompts())
+                .then(() => askQs())
         })
 }
 
@@ -295,7 +265,7 @@ viewAllRoles = () => {
             console.log("\n");
             console.table(roles);
         })
-        .then(() => loadAllPrompts());
+        .then(() => askQs());
 }
 
 // Add a role to the db
@@ -326,7 +296,7 @@ addRole = () => {
                 .then(role => {
                     db.createRole(role)
                         .then(() => console.log(`Success! Added ${role.title} to the database`))
-                        .then(() => loadAllPrompts())
+                        .then(() => askQs())
                 })
         })
 }
@@ -349,7 +319,7 @@ removeRole = () => {
                 }])
                 .then(res => db.removeRole(res.roleId))
                 .then(() => console.log("Success! Removed role from the database"))
-                .then(() => loadAllPrompts())
+                .then(() => askQs())
         })
 }
 
@@ -361,7 +331,7 @@ viewBudgetbyDep = () => {
             console.log("\n");
             console.table(departments);
         })
-        .then(() => loadAllPrompts());
+        .then(() => askQs());
 }
 
 // Breaks from prompts
