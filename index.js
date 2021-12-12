@@ -224,84 +224,73 @@ removeDep = async() => {
 }
 
 // View all roles in db
-viewAllRoles = () => {
-    console.log('\nVIEWING ALL ROLES IN DATABASE')
-    db.findAllRoles()
-        .then(([rows]) => {
-            let roles = rows;
-            console.log("\n");
-            console.table(roles);
-        })
-        .then(() => askQs());
+viewAllRoles = async() => {
+    console.log('\nVIEWING ALL ROLES IN DATABASE\n')
+
+    var [roles] = await db.findAllRoles()
+    console.table(roles)
+    askQs()
 }
 
 // Add a role to the db
-addRole = () => {
-    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW ROLE TO THE DATABASE')
-    db.findAllDeps()
-        .then(([rows]) => {
-            let departments = rows
-            const depOptions = departments.map(({ id, name }) => ({
-                name: name,
-                value: id
-            }))
+addRole = async() => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW ROLE TO THE DATABASE\n')
 
-            inquirer.prompt([{
-                        name: "title",
-                        message: "What would you like to name this role?"
-                    },
-                    {
-                        name: "salary",
-                        message: "What is the salary of the role?"
-                    },
-                    {
-                        type: "list",
-                        name: "department_id",
-                        message: "Which department would you like to add this role to?",
-                        choices: depOptions
-                    }
-                ])
-                .then(role => {
-                    db.createRole(role)
-                        .then(() => console.log(`Success! Added ${role.title} to the database`))
-                        .then(() => askQs())
-                })
-        })
+    var [departments] = await db.findAllDeps()
+    const depOptions = departments.map(({ id, name }) => ({
+        name: name,
+        value: id
+    }))
+
+    let newRole = await inquirer.prompt([{
+            name: "title",
+            message: "What would you like to name this role?"
+        },
+        {
+            name: "salary",
+            message: "What is the salary of the role?"
+        },
+        {
+            type: "list",
+            name: "department_id",
+            message: "Which department would you like to add this role to?",
+            choices: depOptions
+        }
+    ])
+
+    await db.createRole(newRole)
+    console.log(`\nSuccess! Added ${newRole.title} to the database\n`)
+    askQs()
 }
 
 // Remove a role from the db
-removeRole = () => {
+removeRole = async() => {
     console.log('\nANSWER PROMPTS BELOW TO REMOVE A ROLE FROM THE DATABASE *WARNING!! REMOVING A ROLE WILL ALSO REMOVE ASSSOCIATED EMPLOYEES!!')
-    db.findAllRoles()
-        .then(([rows]) => {
-            let roles = rows;
-            const roleOptions = roles.map(({ id, title }) => ({
-                name: title,
-                value: id
-            }))
 
-            inquirer.prompt([{
-                    type: "list",
-                    name: "roleId",
-                    message: "Which role would you like to remove?",
-                    choices: roleOptions
-                }])
-                .then(res => db.removeRole(res.roleId))
-                .then(() => console.log("Success! Removed role from the database"))
-                .then(() => askQs())
-        })
+    let [roles] = await db.findAllRoles()
+    const roleOptions = roles.map(({ id, title }) => ({
+        name: title,
+        value: id
+    }))
+
+    let role = await inquirer.prompt([{
+        type: "list",
+        name: "roleId",
+        message: "Which role would you like to remove?",
+        choices: roleOptions
+    }])
+    db.removeRole(role.roleId)
+    console.log("\nSuccess! Removed role from the database\n")
+    askQs()
 }
 
 // Views the utilized budget by department
-viewBudgetbyDep = () => {
-    console.log('\nVIEWING UTILIZED BUDGETS BY DEPARTMENT')
-    db.viewDepBudgets()
-        .then(([rows]) => {
-            let departments = rows;
-            console.log("\n");
-            console.table(departments);
-        })
-        .then(() => askQs());
+viewBudgetbyDep = async() => {
+    console.log('\nVIEWING UTILIZED BUDGETS BY DEPARTMENT\n')
+
+    let [budget] = await db.viewDepBudgets()
+    console.table(budget);
+    askQs()
 }
 
 // Breaks from prompts
