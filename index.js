@@ -123,32 +123,32 @@ addEmployee = async() => {
 }
 
 // Remove an employee from the db
-removeEmployee = () => {
+removeEmployee = async() => {
     console.log('\nANSWER PROMPTS BELOW TO REMOVE EMPLOYEE FROM DATABASE')
-    db.findAllEmployees()
-        .then(([rows]) => {
-            let employees = rows;
-            const employeeOptions = employees.map(({ id, first_name, last_name }) => ({
-                name: `${first_name} ${last_name}`,
-                value: id
-            }))
 
-            inquirer.prompt([{
-                    type: "list",
-                    name: "employeeId",
-                    message: "Which employee do you want to remove?",
-                    choices: employeeOptions
-                }])
-                .then(res => db.removeEmployee(res.employeeId))
-                .then(() => console.log("Success! Removed the employee from the database"))
-                .then(() => askQs())
-        })
+    let [employees] = await db.findEmployees()
+    const employeeOptions = employees.map(({ id, first_name, last_name }) => ({
+        name: `${first_name} ${last_name}`,
+        value: id
+    }))
+
+    let removeEmployee = await inquirer.prompt([{
+        type: "list",
+        name: "employeeId",
+        message: "Which employee do you want to remove?",
+        choices: employeeOptions
+    }])
+
+    await db.removeEmployee(removeEmployee.employeeId)
+    console.log("Success! Removed the employee from the database")
+    askQs()
 }
+
 
 // Update employee role in db
 updateEmployeeRole = () => {
     console.log('\nANSWER PROMPTS BELOW TO UPDATE EMPLOYEE ROLE IN DATABASE')
-    db.findAllEmployees()
+    db.findEmployees()
         .then(([rows]) => {
             let employee = rows
             const employeeOptions = employee.map(({ id, first_name, last_name }) => ({
