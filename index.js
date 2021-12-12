@@ -3,12 +3,13 @@ const inquirer = require("inquirer");
 const db = require("./db");
 require("console.table");
 
-// Initiates prompts
-askQs()
 
-// All main prompts 
-function askQs() {
-    inquirer.prompt([{
+console.table(
+        "\n------------ EMPLOYEE TRACKER ------------\n"
+    )
+    // All main prompts 
+const askQs = async() => {
+    let answer = await inquirer.prompt([{
         type: 'list',
         name: 'choice',
         message: 'Please make a selection below',
@@ -26,47 +27,45 @@ function askQs() {
             'View Utilized Budget by Department',
             'Quit',
         ]
-    }]).then(res => {
-        let choice = res.choice
+    }])
 
-        switch (choice) {
-            case 'View all Employees':
-                viewEmployees()
-                break;
-            case 'Add Employee':
-                addEmployee()
-                break;
-            case 'Remove Employee':
-                removeEmployee()
-                break;
-            case 'Update Employee Role':
-                updateEmployeeRole()
-                break;
-            case 'View all Departments':
-                viewAllDeps()
-                break;
-            case 'Add Department':
-                addDep()
-                break;
-            case 'Remove Department':
-                removeDep()
-                break;
-            case 'View All Roles':
-                viewAllRoles()
-                break;
-            case 'Add Role':
-                addRole()
-                break;
-            case 'Remove Role':
-                removeRole()
-                break;
-            case 'View Utilized Budget by Department':
-                viewBudgetbyDep()
-                break;
-            default:
-                quit()
-        }
-    })
+    switch (answer.choice) {
+        case 'View all Employees':
+            viewEmployees()
+            break;
+        case 'Add Employee':
+            addEmployee()
+            break;
+        case 'Remove Employee':
+            removeEmployee()
+            break;
+        case 'Update Employee Role':
+            updateEmployeeRole()
+            break;
+        case 'View all Departments':
+            viewAllDeps()
+            break;
+        case 'Add Department':
+            addDep()
+            break;
+        case 'Remove Department':
+            removeDep()
+            break;
+        case 'View All Roles':
+            viewAllRoles()
+            break;
+        case 'Add Role':
+            addRole()
+            break;
+        case 'Remove Role':
+            removeRole()
+            break;
+        case 'View Utilized Budget by Department':
+            viewBudgetbyDep()
+            break;
+        default:
+            quit()
+    }
 }
 
 // View all employees in db
@@ -119,7 +118,7 @@ addEmployee = async() => {
 
     ])
     await db.createEmployee(employee);
-    console.log(`\nSuccess!Added ${employee.first_name} ${employee.last_name} to the database\n`)
+    console.log(`\nSuccess! Added ${employee.first_name} ${employee.last_name} to the database\n`)
     askQs()
 
 }
@@ -298,3 +297,5 @@ quit = () => {
     console.log("Thank you for using the employee tracker app! Bye for now!")
     process.exit()
 }
+
+askQs()
