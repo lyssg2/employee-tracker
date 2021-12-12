@@ -1,5 +1,5 @@
 // Required Dependencies
-const { prompt } = require("inquirer");
+const inquirer = require("inquirer");
 const db = require("./db");
 require("console.table");
 
@@ -8,7 +8,7 @@ askQs()
 
 // All main prompts 
 function askQs() {
-    prompt([{
+    inquirer.prompt([{
         type: 'list',
         name: 'choice',
         message: 'Please make a selection below',
@@ -70,85 +70,56 @@ function askQs() {
 }
 
 // View all employees in db
-viewEmployees = () => {
+viewEmployees = async() => {
     console.log('\nVIEWING ALL EMPLOYEES IN DATABASE')
-    db.findAllEmployees()
-        .then(([rows]) => {
-            let employees = rows;
-            console.log('\n')
-            console.table(employees)
-        })
-        .then(() => askQs())
+    var [employees] = await db.findEmployees()
+    console.table(employees)
+    askQs()
 }
 
+
 // Add Employee to db
-addEmployee = () => {
-    console.log('\nANSWER PROMPTS BELOW TO ADD EMPLOYEE TO DATABASE')
-    prompt([{
-                name: "first_name",
-                message: "What is the employee's first name?"
-            },
-            {
-                name: "last_name",
-                message: "What is the employee's last name?"
-            },
-        ])
-        .then(res => {
-            let firstName = res.first_name
-            let lastName = res.last_name
+addEmployee = async() => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD EMPLOYEE TO DATABASE\n')
+    let [roles] = await db.findAllRoles()
+    let [managers] = await db.findEmployees()
 
-            db.findAllRoles()
-                .then(([rows]) => {
-                    let roles = rows;
-                    const roleChoices = roles.map(({ id, title }) => ({
-                        name: title,
-                        value: id
-                    }));
+    let employee = await inquirer.prompt([{
+            name: "first_name",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "last_name",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "role_id",
+            message: "What is the employee's role?",
+            type: "list",
+            choices: roles.map((role) => {
+                return {
+                    name: role.title,
+                    value: role.id
+                }
+            })
+        },
+        {
+            name: 'manager_id',
+            message: "Who is their manager?",
+            type: 'list',
+            choices: managers.map((manager) => {
+                return {
+                    name: manager.first_name + " " + manager.last_name,
+                    value: manager.id
+                }
+            }),
+        },
 
-                    prompt({
-                            type: "list",
-                            name: "roleId",
-                            message: "What is the employee's role?",
-                            choices: roleChoices
-                        })
-                        .then(res => {
-                            let roleId = res.roleId;
-                            db.
+    ])
+    await db.createEmployee(employee);
+    console.log(`Added ${employee.first_name} ${employee.last_name} to the database`)
+    askQs()
 
-                            findAllEmployees()
-                                .then(([rows]) => {
-                                    let employee = rows
-                                    const managerOptions = employee.map(({ id, first_name, last_name }) => ({
-                                        name: `${first_name} ${last_name}`,
-                                        value: id
-                                    }));
-
-                                    managerOptions.unshift({ name: "None", value: null });
-
-                                    prompt({
-                                            type: "list",
-                                            name: "managerId",
-                                            message: "Who is the employee's manager?",
-                                            choices: managerOptions
-                                        })
-                                        .then(res => {
-                                            let employee = {
-                                                manager_id: res.managerId,
-                                                role_id: roleId,
-                                                first_name: firstName,
-                                                last_name: lastName
-                                            }
-
-                                            db.createEmployee(employee);
-                                        })
-                                        .then(() => console.log(
-                                            `Added ${firstName} ${lastName} to the database`
-                                        ))
-                                        .then(() => askQs())
-                                })
-                        })
-                })
-        })
 }
 
 // Remove an employee from the db
@@ -162,7 +133,7 @@ removeEmployee = () => {
                 value: id
             }))
 
-            prompt([{
+            inquirer.prompt([{
                     type: "list",
                     name: "employeeId",
                     message: "Which employee do you want to remove?",
@@ -185,7 +156,7 @@ updateEmployeeRole = () => {
                 value: id
             }));
 
-            prompt([{
+            inquirer.prompt([{
                     type: "list",
                     name: "employeeId",
                     message: "Which employee would you like to update their role for?",
@@ -200,7 +171,7 @@ updateEmployeeRole = () => {
                                 name: title,
                                 value: id
                             }));
-                            prompt([{
+                            inquirer.prompt([{
                                     type: "list",
                                     name: "roleId",
                                     message: "Which role would you like to assign to this employee?",
@@ -229,7 +200,7 @@ viewAllDeps = () => {
 // Add a department to the db
 addDep = () => {
     console.log('\nANSWER PROMPTS BELOW TO ADD A NEW DEPARTMENT TO THE DATABASE')
-    prompt([{
+    inquirer.prompt([{
             name: "name",
             message: "What is the name of the department you would like to add?"
         }])
@@ -252,7 +223,7 @@ removeDep = () => {
                 value: id
             }))
 
-            prompt([{
+            inquirer.prompt([{
                     type: "list",
                     name: "depId",
                     message: "Which department would you like to remove?",
@@ -287,7 +258,7 @@ addRole = () => {
                 value: id
             }))
 
-            prompt([{
+            inquirer.prompt([{
                         name: "title",
                         message: "What would you like to name this role?"
                     },
@@ -321,7 +292,7 @@ removeRole = () => {
                 value: id
             }))
 
-            prompt([{
+            inquirer.prompt([{
                     type: "list",
                     name: "roleId",
                     message: "Which role would you like to remove?",

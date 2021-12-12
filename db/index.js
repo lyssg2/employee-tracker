@@ -1,22 +1,18 @@
 const connection = require('./connection')
 
-class DB {
+class database {
     constructor(connection) {
         this.connection = connection;
     }
 
-    // function to find all employees in the db and display their info
-    findAllEmployees() {
-        return this.connection.promise().query(
-            "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM EMPLOYEE LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
-        )
+    // View all employees
+    findEmployees() {
+        return this.connection.promise().query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM EMPLOYEE LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;")
     }
 
-    // Find all departments
-    findAllDeps() {
-        return this.connection.promise().query(
-            "SELECT department.id, department.name FROM department;"
-        );
+    // Get employee manager
+    getManager() {
+        return this.connection.promise().query('SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee')
     }
 
     // Create a new employee
@@ -86,4 +82,4 @@ class DB {
 }
 
 
-module.exports = new DB(connection);
+module.exports = new database(connection);
