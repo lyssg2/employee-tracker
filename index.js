@@ -203,26 +203,24 @@ addDep = async() => {
 }
 
 // Remove a department in the db
-removeDep = () => {
-    console.log('\nANSWER PROMPTS BELOW TO REMOVE A DEPARTMENT FROM THE DATABASE *WARNING!! REMOVING A DEPARTMENT WILL ALSO REMOVE ASSSOCIATED EMPLOYEES AND ROLES!!')
-    db.findAllDeps()
-        .then(([rows]) => {
-            let departments = rows;
-            const depOptions = departments.map(({ id, name }) => ({
-                name: name,
-                value: id
-            }))
+removeDep = async() => {
+    console.log('\nANSWER PROMPTS BELOW TO REMOVE A DEPARTMENT FROM THE DATABASE *WARNING!! REMOVING A DEPARTMENT WILL ALSO REMOVE ASSSOCIATED EMPLOYEES AND ROLES!!\n')
 
-            inquirer.prompt([{
-                    type: "list",
-                    name: "depId",
-                    message: "Which department would you like to remove?",
-                    choices: depOptions
-                }])
-                .then(res => db.removeDep(res.depId))
-                .then(() => console.log("Success! Removed department from the database"))
-                .then(() => askQs())
-        })
+    var [departments] = await db.findAllDeps()
+    const depOptions = departments.map(({ id, name }) => ({
+        name: name,
+        value: id
+    }))
+
+    let removeDepartment = await inquirer.prompt([{
+        type: "list",
+        name: "depId",
+        message: "Which department would you like to remove?",
+        choices: depOptions
+    }])
+    await db.removeDep(removeDepartment.depId)
+    console.log("\nSuccess! Removed department from the database\n")
+    askQs()
 }
 
 // View all roles in db
