@@ -146,43 +146,37 @@ removeEmployee = async() => {
 
 
 // Update employee role in db
-updateEmployeeRole = () => {
+updateEmployeeRole = async() => {
     console.log('\nANSWER PROMPTS BELOW TO UPDATE EMPLOYEE ROLE IN DATABASE')
-    db.findEmployees()
-        .then(([rows]) => {
-            let employee = rows
-            const employeeOptions = employee.map(({ id, first_name, last_name }) => ({
-                name: `${first_name} ${last_name}`,
-                value: id
-            }));
 
-            inquirer.prompt([{
-                    type: "list",
-                    name: "employeeId",
-                    message: "Which employee would you like to update their role for?",
-                    choices: employeeOptions
-                }])
-                .then(res => {
-                    let employeeId = res.employeeId
-                    db.findAllRoles()
-                        .then(([rows]) => {
-                            let roles = rows;
-                            const roleOptions = roles.map(({ id, title }) => ({
-                                name: title,
-                                value: id
-                            }));
-                            inquirer.prompt([{
-                                    type: "list",
-                                    name: "roleId",
-                                    message: "Which role would you like to assign to this employee?",
-                                    choices: roleOptions
-                                }])
-                                .then(res => db.updateEmployeeRole(employeeId, res.roleId))
-                                .then(() => console.log("Success! Updated employee's role"))
-                                .then(() => askQs())
-                        });
-                });
-        })
+    let [employees] = await db.findEmployees()
+    const employeeOptions = employees.map(({ id, first_name, last_name }) => ({
+        name: `${first_name} ${last_name}`,
+        value: id
+    }))
+
+    let employeeUpdate = await inquirer.prompt([{
+        type: "list",
+        name: "employeeId",
+        message: "Which employee would you like to update their role for?",
+        choices: employeeOptions
+    }])
+
+
+    let [roles] = await db.findAllRoles()
+    const roleOptions = roles.map(({ id, title }) => ({
+        name: title,
+        value: id
+    }));
+    let roleUpdate = await inquirer.prompt([{
+        type: "list",
+        name: "roleId",
+        message: "Which role would you like to assign to this employee?",
+        choices: roleOptions
+    }])
+    await db.updateEmployeeRole(employeeUpdate.employeeId, roleUpdate.roleId)
+    console.log("Success! Updated employee's role")
+    askQs()
 }
 
 // View all departments in the db
