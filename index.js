@@ -119,7 +119,7 @@ addEmployee = async() => {
 
     ])
     await db.createEmployee(employee);
-    console.log(`Added ${employee.first_name} ${employee.last_name} to the database`)
+    console.log(`\nSuccess!Added ${employee.first_name} ${employee.last_name} to the database\n`)
     askQs()
 
 }
@@ -142,7 +142,7 @@ removeEmployee = async() => {
     }])
 
     await db.removeEmployee(removeEmployee.employeeId)
-    console.log("Success! Removed the employee from the database")
+    console.log("\nSuccess! Removed the employee from the database\n")
     askQs()
 }
 
@@ -177,7 +177,7 @@ updateEmployeeRole = async() => {
         choices: roleOptions
     }])
     await db.updateEmployeeRole(employeeUpdate.employeeId, roleUpdate.roleId)
-    console.log("Success! Updated employee's role")
+    console.log("\nSuccess! Updated employee's role\n")
     askQs()
 }
 
@@ -191,18 +191,15 @@ viewAllDeps = async() => {
 }
 
 // Add a department to the db
-addDep = () => {
-    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW DEPARTMENT TO THE DATABASE')
-    inquirer.prompt([{
-            name: "name",
-            message: "What is the name of the department you would like to add?"
-        }])
-        .then(res => {
-            let name = res;
-            db.createDep(name)
-                .then(() => console.log(`Success! Added ${name.name} department to the database`))
-                .then(() => askQs())
-        })
+addDep = async() => {
+    console.log('\nANSWER PROMPTS BELOW TO ADD A NEW DEPARTMENT TO THE DATABASE\n')
+    let newDep = await inquirer.prompt([{
+        name: "name",
+        message: "What is the name of the department you would like to add?"
+    }])
+    await db.createDep(newDep)
+    console.log(`\nSuccess! Added ${newDep.name} department to the database\n`)
+    askQs()
 }
 
 // Remove a department in the db
