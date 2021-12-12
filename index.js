@@ -71,7 +71,8 @@ function askQs() {
 
 // View all employees in db
 viewEmployees = async() => {
-    console.log('\nVIEWING ALL EMPLOYEES IN DATABASE')
+    console.log('\nVIEWING ALL EMPLOYEES IN DATABASE\n')
+
     var [employees] = await db.findEmployees()
     console.table(employees)
     askQs()
@@ -81,6 +82,7 @@ viewEmployees = async() => {
 // Add Employee to db
 addEmployee = async() => {
     console.log('\nANSWER PROMPTS BELOW TO ADD EMPLOYEE TO DATABASE\n')
+
     let [roles] = await db.findAllRoles()
     let [managers] = await db.findEmployees()
 
@@ -180,15 +182,12 @@ updateEmployeeRole = async() => {
 }
 
 // View all departments in the db
-viewAllDeps = () => {
-    console.log('\nVIEWING ALL DEPARTMENTS IN DATABASE')
-    db.findAllDeps()
-        .then(([rows]) => {
-            let departments = rows;
-            console.log("\n");
-            console.table(departments);
-        })
-        .then(() => askQs());
+viewAllDeps = async() => {
+    console.log('\nVIEWING ALL DEPARTMENTS IN DATABASE\n')
+
+    var [departments] = await db.findAllDeps()
+    console.table(departments);
+    askQs()
 }
 
 // Add a department to the db
